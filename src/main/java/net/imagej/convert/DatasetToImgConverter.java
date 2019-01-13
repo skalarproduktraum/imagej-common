@@ -39,8 +39,7 @@ import org.scijava.Priority;
 import org.scijava.convert.AbstractConverter;
 import org.scijava.convert.Converter;
 import org.scijava.plugin.Plugin;
-import org.scijava.util.ConversionUtils;
-import org.scijava.util.GenericUtils;
+import org.scijava.util.Types;
 
 /**
  * Simple {@link Converter} for unwrapping {@link Dataset}s to their underlying
@@ -49,7 +48,7 @@ import org.scijava.util.GenericUtils;
  * @author Mark Hiner
  */
 @SuppressWarnings("rawtypes")
-@Plugin(type = Converter.class, priority = Priority.NORMAL_PRIORITY + 1)
+@Plugin(type = Converter.class, priority = Priority.NORMAL + 1)
 public class DatasetToImgConverter extends AbstractConverter<Dataset, Img> {
 
 	@SuppressWarnings("unchecked")
@@ -73,7 +72,7 @@ public class DatasetToImgConverter extends AbstractConverter<Dataset, Img> {
 	public boolean canConvert(final Object src, final Type dest) {
 		if (src == null)
 			return false;
-		final Class<?> destClass = GenericUtils.getClass(dest);
+		final Class<?> destClass = Types.raw(dest);
 		return canConvert(src, destClass);
 	}
 
@@ -85,7 +84,7 @@ public class DatasetToImgConverter extends AbstractConverter<Dataset, Img> {
 		if (Dataset.class.isAssignableFrom(srcClass)) {
 			final Dataset data = (Dataset) src;
 			srcClass = data.getImgPlus().getImg().getClass();
-			return ConversionUtils.canCast(srcClass, dest);
+			return Types.isAssignable(srcClass, dest);
 		}
 
 		return false;
